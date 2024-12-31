@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: longhorn-manager
+  namespace: longhorn-system
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: longhorn-manager
+  template:
+    metadata:
+      labels:
+        app: longhorn-manager
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app: longhorn-manager
+              topologyKey: "kubernetes.io/hostname"
+      containers:
+        - name: longhorn-manager
+          image: longhornio/longhorn-manager:v1.4.0
+          ports:
+            - containerPort: 9500

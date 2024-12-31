@@ -1,0 +1,50 @@
+global:
+  edition: ce
+  ingress:
+    configureCertmanager: false
+    enabled: true
+    tls:
+      enabled: true
+      secretName: gitlab-tls
+    host: gitlab.local
+
+certmanager:
+  install: false
+
+gitlab:
+  task-runner:
+    replicas: 2
+    affinity:
+      podAntiAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                    - gitlab
+            topologyKey: "kubernetes.io/hostname"
+  gitaly:
+    persistence:
+      enabled: true
+      size: 20Gi
+      storageClass: longhorn
+  gitlab-shell:
+    enabled: true
+
+redis:
+  enabled: true
+  persistence:
+    enabled: true
+    size: 5Gi
+    storageClass: longhorn
+
+postgresql:
+  enabled: true
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClass: longhorn
+
+prometheus:
+  install: false
